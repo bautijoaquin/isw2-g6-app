@@ -91,6 +91,19 @@ export type PartidoDetalle = {
   eventos: Evento[];
 };
 
+/** Un partido en el listado de una fecha: igual que el detalle pero sin árbitro ni eventos. */
+export type PartidoResumen = {
+  id: number;
+  numeroFecha: number;
+  local: Resumen;
+  visitante: Resumen;
+  golesLocal: number;
+  golesVisitante: number;
+  cancha: Resumen;
+  fechaHoraInicio: string;
+  estado: EstadoPartido;
+};
+
 export type FilaTabla = {
   posicion: number;
   equipoId: number;

@@ -4,21 +4,15 @@ import { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { getPartido } from '@/api/resultados';
-import type { EstadoPartido, Evento, PartidoDetalle } from '@/api/types';
+import type { Evento, PartidoDetalle } from '@/api/types';
 import { AppText, Card, EmptyState, ErrorMessage, Loading, Screen, StatusChip } from '@/components';
 import { useApi } from '@/hooks/useApi';
 import { borders, colors, spacing } from '@/theme';
 import { formatearFechaHora } from '@/utils/fechas';
+import { estadosPartido } from '@/utils/partidos';
 
 /** Cada cuánto se actualiza un partido EN_JUEGO, para ver los goles sin tirar para abajo. */
 const REFRESCO_EN_JUEGO_MS = 30_000;
-
-const estados: Record<EstadoPartido, { label: string; status: 'success' | 'warning' | 'error' | 'neutral' }> = {
-  PROGRAMADO: { label: 'Programado', status: 'neutral' },
-  EN_JUEGO: { label: 'En juego', status: 'success' },
-  FINALIZADO: { label: 'Finalizado', status: 'neutral' },
-  SUSPENDIDO: { label: 'Suspendido', status: 'warning' },
-};
 
 // RF-10: detalle de un partido con su resultado y sus eventos. Es público.
 // El resultado lo calcula el backend con los goles (RN-06): un partido sin goles viene 0 a 0.
@@ -66,7 +60,7 @@ export default function PartidoScreen() {
 }
 
 function Marcador({ partido }: { partido: PartidoDetalle }) {
-  const estado = estados[partido.estado];
+  const estado = estadosPartido[partido.estado];
   return (
     <Card style={styles.marcador}>
       <StatusChip label={estado.label} status={estado.status} />

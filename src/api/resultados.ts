@@ -1,7 +1,10 @@
 import { api } from './client';
-import type { FilaTabla, PartidoDetalle, Suspendido } from './types';
+import type { FilaTabla, PartidoDetalle, PartidoResumen, Suspendido } from './types';
 
 // RF-10, RF-11 y RF-12: consultas públicas, no piden sesión
+
+/** Todos los partidos del torneo con su resultado, ordenados por fecha y horario. */
+export const getPartidos = (torneoId: number) => api<PartidoResumen[]>(`/api/torneos/${torneoId}/partidos`);
 
 /** Detalle de un partido con su resultado y sus eventos. */
 export const getPartido = (id: number) => api<PartidoDetalle>(`/api/partidos/${id}`);
