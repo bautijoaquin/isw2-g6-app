@@ -32,3 +32,19 @@ export type LoginResponse = {
   nombre: string;
   rol: Rol;
 };
+
+export type Usuario = {
+  id: number;
+  username: string;
+  nombreCompleto: string;
+  rol: Rol;
+  activo: boolean;
+  fechaAlta: string;
+};
+
+export type UsuarioNuevo = {
+  username: string;
+  password: string;
+  nombreCompleto: string;
+  rol: Rol;
+};

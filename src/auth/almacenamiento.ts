@@ -28,12 +28,18 @@ export async function borrarSesion() {
   else await SecureStore.deleteItemAsync(CLAVE);
 }
 
+/** Datos que el backend pone dentro del JWT (ver JwtService). */
+export function leerToken(token: string): { id?: number; exp?: number } | null {
+  try {
+    return JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
+  } catch {
+    return null;
+  }
+}
+
 /** true si el JWT ya venció (el backend los emite por 8 horas). */
 export function tokenVencido(token: string): boolean {
-  try {
-    const payload = JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
-    return typeof payload.exp === 'number' && payload.exp * 1000 <= Date.now();
-  } catch {
-    return true;
-  }
+  const payload = leerToken(token);
+  if (!payload) return true;
+  return typeof payload.exp === 'number' && payload.exp * 1000 <= Date.now();
 }

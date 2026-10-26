@@ -4,12 +4,14 @@ import { login } from '@/api/auth';
 import { onSesionExpirada, setToken } from '@/api/client';
 import type { LoginResponse, Rol } from '@/api/types';
 
-import { borrarSesion, guardarSesion, leerSesion, tokenVencido } from './almacenamiento';
+import { borrarSesion, guardarSesion, leerSesion, leerToken, tokenVencido } from './almacenamiento';
 
 type Sesion = LoginResponse;
 
 type AuthContextValue = {
   sesion: Sesion | null;
+  /** id del usuario logueado (sale del token). Sirve, por ejemplo, para RN-08. */
+  usuarioId: number | null;
   /** true mientras se lee la sesión guardada al abrir la app. */
   restaurando: boolean;
   /** true si se cerró sola porque el backend respondió 401 (token vencido). */
@@ -67,11 +69,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await limpiar();
   }, [limpiar]);
 
+  const usuarioId = useMemo(() => (sesion ? (leerToken(sesion.token)?.id ?? null) : null), [sesion]);
+
   const tieneRol = useCallback((...roles: Rol[]) => !!sesion && roles.includes(sesion.rol), [sesion]);
 
   const value = useMemo(
-    () => ({ sesion, restaurando, expirada, iniciarSesion, cerrarSesion, tieneRol }),
-    [sesion, restaurando, expirada, iniciarSesion, cerrarSesion, tieneRol],
+    () => ({ sesion, usuarioId, restaurando, expirada, iniciarSesion, cerrarSesion, tieneRol }),
+    [sesion, usuarioId, restaurando, expirada, iniciarSesion, cerrarSesion, tieneRol],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
