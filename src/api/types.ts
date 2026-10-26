@@ -48,3 +48,71 @@ export type UsuarioNuevo = {
   nombreCompleto: string;
   rol: Rol;
 };
+
+// Partido en vivo y cálculos (RF-10, RF-11, RF-12)
+
+/** Referencia corta a otra entidad (equipo, cancha, árbitro). */
+export type Resumen = {
+  id: number;
+  nombre: string;
+};
+
+export type EstadoPartido = 'PROGRAMADO' | 'EN_JUEGO' | 'FINALIZADO' | 'SUSPENDIDO';
+
+export type TipoEvento = 'GOL' | 'AMARILLA' | 'ROJA';
+
+export type Evento = {
+  id: number;
+  tipo: TipoEvento;
+  minuto: number;
+  jugadorId: number;
+  /** Nombre y apellido juntos. */
+  jugador: string;
+  numeroCamiseta: number | null;
+  /** Equipo del jugador: sirve para saber si el evento es del local o del visitante. */
+  equipoId: number;
+};
+
+/** El resultado no viene guardado: el backend lo calcula con los goles (RN-06). */
+export type PartidoDetalle = {
+  id: number;
+  torneoId: number;
+  numeroFecha: number;
+  local: Resumen;
+  visitante: Resumen;
+  golesLocal: number;
+  golesVisitante: number;
+  cancha: Resumen;
+  arbitro: Resumen;
+  /** Fecha y hora local sin zona, por ejemplo "2026-10-26T15:00:00". */
+  fechaHoraInicio: string;
+  estado: EstadoPartido;
+  /** Ordenados por minuto. */
+  eventos: Evento[];
+};
+
+export type FilaTabla = {
+  posicion: number;
+  equipoId: number;
+  equipo: string;
+  pj: number;
+  pg: number;
+  pe: number;
+  pp: number;
+  gf: number;
+  gc: number;
+  dg: number;
+  pts: number;
+};
+
+export type Suspendido = {
+  jugadorId: number;
+  nombre: string;
+  apellido: string;
+  numeroCamiseta: number | null;
+  equipoId: number;
+  equipo: string;
+  motivo: 'ROJA' | 'DOBLE_AMARILLA';
+  /** Fecha en la que recibió la tarjeta (la anterior a la consultada). */
+  fechaSancion: number;
+};
