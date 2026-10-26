@@ -1,3 +1,4 @@
+export { AccionesPartido } from './AccionesPartido';
 export { AppText } from './AppText';
 export { Button } from './Button';
 export { Card } from './Card';
@@ -7,4 +8,5 @@ export { ListItem } from './ListItem';
 export { PartidoCard, estadoPartido } from './PartidoCard';
 export { RolSelector } from './RolSelector';
 export { Screen } from './Screen';
+export { Selector } from './Selector';
 export { TextField } from './TextField';

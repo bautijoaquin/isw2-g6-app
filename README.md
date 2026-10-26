@@ -46,6 +46,7 @@ src/
 │   ├── _layout.tsx      Raíz: fuentes, tema, sesión y navegación
 │   ├── login.tsx        Ingreso (RF-01)
 │   ├── usuarios/        ABM de usuarios, solo admin (RF-02)
+│   ├── partidos/        Detalle, estados y programar partidos (RF-06, RF-07, RF-10)
 │   └── (tabs)/          Pestañas: Partidos, Tabla, Equipos, Cuenta
 ├── api/                 Llamadas al backend
 │   ├── client.ts        api(): agrega el token y convierte errores en ApiError

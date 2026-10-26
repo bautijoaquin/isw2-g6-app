@@ -27,6 +27,14 @@ export type Arbitro = {
   activo: boolean;
 };
 
+export type Equipo = {
+  id: number;
+  torneoId: number;
+  nombre: string;
+  barrio: string | null;
+  activo: boolean;
+};
+
 export type LoginResponse = {
   token: string;
   nombre: string;
@@ -72,8 +80,6 @@ export type Partido = {
   estado: EstadoPartido;
 };
 
-// Partido en vivo y cálculos (RF-10, RF-11, RF-12)
-
 export type TipoEvento = 'GOL' | 'AMARILLA' | 'ROJA';
 
 export type Evento = {
@@ -81,17 +87,28 @@ export type Evento = {
   tipo: TipoEvento;
   minuto: number;
   jugadorId: number;
-  /** Nombre y apellido juntos. */
   jugador: string;
   numeroCamiseta: number | null;
-  /** Equipo del jugador: sirve para saber si el evento es del local o del visitante. */
   equipoId: number;
 };
 
-/** Detalle de un partido: lo mismo que en el fixture más sus eventos, ordenados por minuto. */
+/** Detalle de un partido con sus goles y tarjetas en orden de minuto (RF-10). */
 export type PartidoDetalle = Partido & {
   eventos: Evento[];
 };
+
+/** Lo que se manda al programar o modificar un partido (RF-06). fechaHoraInicio: "2026-11-07T15:00". */
+export type PartidoNuevo = {
+  torneoId: number;
+  numeroFecha: number;
+  equipoLocalId: number;
+  equipoVisitanteId: number;
+  canchaId: number;
+  arbitroId: number;
+  fechaHoraInicio: string;
+};
+
+// Tabla y suspendidos (RF-11, RF-12)
 
 export type FilaTabla = {
   posicion: number;

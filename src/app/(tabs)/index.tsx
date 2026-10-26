@@ -1,11 +1,12 @@
-import { router } from 'expo-router';
-import { useState } from 'react';
+import { router, useFocusEffect } from 'expo-router';
+import { useCallback, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { getTorneos } from '@/api/catalogo';
 import { getPartidos } from '@/api/partidos';
 import type { Partido } from '@/api/types';
-import { EmptyState, ErrorMessage, FilterChip, Loading, PartidoCard, Screen } from '@/components';
+import { SoloRol } from '@/auth/SoloRol';
+import { Button, EmptyState, ErrorMessage, FilterChip, Loading, PartidoCard, Screen } from '@/components';
 import { useApi } from '@/hooks/useApi';
 import { spacing } from '@/theme';
 
@@ -16,6 +17,10 @@ export default function PartidosScreen() {
 
   const partidos = useApi(() => (torneo ? getPartidos(torneo.id) : Promise.resolve([])), [torneo?.id]);
   const [elegida, setElegida] = useState<number | null>(null);
+
+  // Al volver del detalle (por ejemplo, después de finalizar un partido) se actualiza el fixture.
+  const recargarPartidos = partidos.recargar;
+  useFocusEffect(useCallback(() => recargarPartidos(), [recargarPartidos]));
 
   const fechas = [...new Set((partidos.data ?? []).map((p) => p.numeroFecha))];
   const fecha = elegida ?? fechaParaMostrar(partidos.data ?? []);
@@ -30,7 +35,12 @@ export default function PartidosScreen() {
       overline={torneo ? `${torneo.nombre} · ${torneo.anio}` : 'Liga Amateur Santafesina'}
       title="Partidos"
       refreshing={cargando}
-      onRefresh={recargar}>
+      onRefresh={recargar}
+      action={
+        <SoloRol roles={['ADMIN']}>
+          <Button title="Programar" size="small" onPress={() => router.push('/partidos/programar')} />
+        </SoloRol>
+      }>
       {error ? <ErrorMessage message={error} onRetry={recargar} /> : null}
       {cargando && !partidos.data ? <Loading /> : null}
 
