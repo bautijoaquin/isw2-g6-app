@@ -8,4 +8,5 @@ export { ListItem } from './ListItem';
 export { PartidoCard, estadoPartido } from './PartidoCard';
 export { RolSelector } from './RolSelector';
 export { Screen } from './Screen';
+export { Selector } from './Selector';
 export { TextField } from './TextField';
