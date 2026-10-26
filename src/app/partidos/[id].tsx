@@ -1,11 +1,21 @@
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { getPartido } from '@/api/resultados';
+import { SoloRol } from '@/auth/SoloRol';
 import type { Evento, PartidoDetalle } from '@/api/types';
-import { AppText, Card, EmptyState, ErrorMessage, Loading, Screen, StatusChip } from '@/components';
+import {
+  AppText,
+  Button,
+  Card,
+  EmptyState,
+  ErrorMessage,
+  IconoEvento,
+  Loading,
+  Screen,
+  StatusChip,
+} from '@/components';
 import { useApi } from '@/hooks/useApi';
 import { borders, colors, spacing } from '@/theme';
 import { formatearFechaHora } from '@/utils/fechas';
@@ -39,6 +49,18 @@ export default function PartidoScreen() {
     <Screen overline={`Fecha ${partido.numeroFecha}`} title="Partido" refreshing={cargando} onRefresh={recargar}>
       {error ? <ErrorMessage message={error} onRetry={recargar} /> : null}
       <Marcador partido={partido} />
+
+      {/* RF-08: solo el delegado o el admin cargan eventos, y solo con el partido en juego */}
+      {enJuego ? (
+        <SoloRol roles={['ADMIN', 'DELEGADO']}>
+          <Button
+            title="Cargar eventos"
+            size="large"
+            onPress={() => router.push({ pathname: '/en-vivo/[id]', params: { id: String(partido.id) } })}
+            style={styles.cargar}
+          />
+        </SoloRol>
+      ) : null}
 
       <View style={styles.seccion}>
         <AppText variant="subhead">Eventos</AppText>
@@ -110,19 +132,6 @@ function FilaEvento({ evento, esLocal }: { evento: Evento; esLocal: boolean }) {
   );
 }
 
-function IconoEvento({ tipo }: { tipo: Evento['tipo'] }) {
-  if (tipo === 'GOL') {
-    return <MaterialCommunityIcons name="soccer" size={18} color={colors.text} accessibilityLabel="Gol" />;
-  }
-  const color = tipo === 'ROJA' ? colors.error : colors.warning;
-  return (
-    <View
-      accessibilityLabel={tipo === 'ROJA' ? 'Tarjeta roja' : 'Tarjeta amarilla'}
-      style={[styles.tarjeta, { backgroundColor: color }]}
-    />
-  );
-}
-
 const styles = StyleSheet.create({
   marcador: {
     borderColor: colors.borderStrong,
@@ -138,6 +147,9 @@ const styles = StyleSheet.create({
   },
   derecha: {
     textAlign: 'right',
+  },
+  cargar: {
+    marginTop: spacing.md,
   },
   datos: {
     gap: spacing.xs,
@@ -162,9 +174,5 @@ const styles = StyleSheet.create({
   },
   jugador: {
     flex: 1,
-  },
-  tarjeta: {
-    width: 12,
-    height: 16,
   },
 });

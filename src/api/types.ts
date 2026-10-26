@@ -129,3 +129,23 @@ export type Suspendido = {
   /** Fecha en la que recibió la tarjeta (la anterior a la consultada). */
   fechaSancion: number;
 };
+
+// Partido en vivo (RF-08, RF-09)
+
+export type Jugador = {
+  id: number;
+  equipoId: number;
+  equipo: string;
+  nombre: string;
+  apellido: string;
+  dni: string;
+  numeroCamiseta: number | null;
+  activo: boolean;
+};
+
+export type EventoNuevo = {
+  jugadorId: number;
+  tipo: TipoEvento;
+  /** De 1 a 120. */
+  minuto: number;
+};
