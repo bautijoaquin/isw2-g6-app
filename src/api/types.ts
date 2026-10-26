@@ -26,3 +26,9 @@ export type Arbitro = {
   dni: string;
   activo: boolean;
 };
+
+export type LoginResponse = {
+  token: string;
+  nombre: string;
+  rol: Rol;
+};
