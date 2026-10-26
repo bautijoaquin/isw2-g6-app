@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { useAuth } from '@/auth/AuthContext';
 import { SoloRol } from '@/auth/SoloRol';
-import { AppText, Button, Card, Loading, Screen, StatusChip } from '@/components';
+import { AppText, Button, Card, ListItem, Loading, Screen, StatusChip } from '@/components';
 import { borders, colors, spacing } from '@/theme';
 
 const nombreRol = { ADMIN: 'Administrador', DELEGADO: 'Delegado' } as const;
@@ -51,6 +51,12 @@ export default function CuentaScreen() {
           <AppText variant="overline" color={colors.textSecondary} style={styles.tituloSeccion}>
             Administración
           </AppText>
+          <ListItem
+            icon="account-group-outline"
+            title="Usuarios"
+            subtitle="Altas, roles, contraseñas y bajas"
+            onPress={() => router.push('/usuarios')}
+          />
         </View>
       </SoloRol>
 

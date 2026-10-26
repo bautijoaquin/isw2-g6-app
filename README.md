@@ -45,6 +45,7 @@ src/
 ├── app/                 Pantallas. Cada archivo es una ruta (Expo Router)
 │   ├── _layout.tsx      Raíz: fuentes, tema, sesión y navegación
 │   ├── login.tsx        Ingreso (RF-01)
+│   ├── usuarios/        ABM de usuarios, solo admin (RF-02)
 │   └── (tabs)/          Pestañas: Partidos, Tabla, Equipos, Cuenta
 ├── api/                 Llamadas al backend
 │   ├── client.ts        api(): agrega el token y convierte errores en ApiError
@@ -54,6 +55,7 @@ src/
 ├── components/          Componentes de UI reutilizables (Button, Card, TextField...)
 ├── auth/                Sesión (AuthContext) y permisos por rol (SoloRol, RequiereRol)
 ├── hooks/useApi.ts      Cargar datos con cargando / error / recargar
+├── utils/               confirmar() antes de acciones importantes, volver()
 └── theme/               Colores, fuentes y espaciado (sale de docs/DESIGN.md)
 ```
 

@@ -60,6 +60,9 @@ export default function RootLayout() {
           }}>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="login" options={{ title: '', presentation: 'modal' }} />
+          <Stack.Screen name="usuarios/index" options={{ title: '' }} />
+          <Stack.Screen name="usuarios/nuevo" options={{ title: '' }} />
+          <Stack.Screen name="usuarios/[id]" options={{ title: '' }} />
         </Stack>
       </ThemeProvider>
     </AuthProvider>

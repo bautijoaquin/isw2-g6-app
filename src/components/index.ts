@@ -4,5 +4,6 @@ export { Card } from './Card';
 export { FilterChip, StatusChip } from './Chip';
 export { EmptyState, ErrorMessage, Loading } from './Feedback';
 export { ListItem } from './ListItem';
+export { RolSelector } from './RolSelector';
 export { Screen } from './Screen';
 export { TextField } from './TextField';
