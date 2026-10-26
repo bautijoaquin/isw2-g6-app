@@ -5,7 +5,8 @@ import { StyleSheet, View } from 'react-native';
 
 import { getPartido } from '@/api/partidos';
 import type { Evento, PartidoDetalle, TipoEvento } from '@/api/types';
-import { AppText, Card, EmptyState, ErrorMessage, Loading, Screen, StatusChip, estadoPartido } from '@/components';
+import { SoloRol } from '@/auth/SoloRol';
+import { AccionesPartido, AppText, Card, EmptyState, ErrorMessage, Loading, Screen, StatusChip, estadoPartido } from '@/components';
 import { useApi } from '@/hooks/useApi';
 import { colors, spacing } from '@/theme';
 import { diaCorto, hora } from '@/utils/formato';
@@ -19,6 +20,7 @@ const iconoEvento: Record<TipoEvento, { icono: Icono; color: string; texto: stri
 };
 
 // RF-10: detalle público de un partido con el resultado calculado (RN-06) y sus eventos.
+// RF-07: el delegado o el admin cambian el estado desde acá.
 export default function DetallePartidoScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { data: partido, error, cargando, recargar } = useApi(() => getPartido(Number(id)), [id]);
@@ -35,6 +37,9 @@ export default function DetallePartidoScreen() {
     <Screen overline={`Fecha ${partido.numeroFecha}`} title="Partido" refreshing={cargando} onRefresh={recargar}>
       {error ? <ErrorMessage message={error} onRetry={recargar} /> : null}
       <Marcador partido={partido} />
+      <SoloRol roles={['ADMIN', 'DELEGADO']}>
+        <AccionesPartido partido={partido} onCambio={recargar} />
+      </SoloRol>
 
       <AppText variant="overline" color={colors.textSecondary} style={styles.seccion}>
         Goles y tarjetas

@@ -1,5 +1,5 @@
-import { router } from 'expo-router';
-import { useState } from 'react';
+import { router, useFocusEffect } from 'expo-router';
+import { useCallback, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { getTorneos } from '@/api/catalogo';
@@ -16,6 +16,10 @@ export default function PartidosScreen() {
 
   const partidos = useApi(() => (torneo ? getPartidos(torneo.id) : Promise.resolve([])), [torneo?.id]);
   const [elegida, setElegida] = useState<number | null>(null);
+
+  // Al volver del detalle (por ejemplo, después de finalizar un partido) se actualiza el fixture.
+  const recargarPartidos = partidos.recargar;
+  useFocusEffect(useCallback(() => recargarPartidos(), [recargarPartidos]));
 
   const fechas = [...new Set((partidos.data ?? []).map((p) => p.numeroFecha))];
   const fecha = elegida ?? fechaParaMostrar(partidos.data ?? []);
