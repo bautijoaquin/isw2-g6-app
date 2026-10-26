@@ -27,6 +27,14 @@ export type Arbitro = {
   activo: boolean;
 };
 
+export type Equipo = {
+  id: number;
+  torneoId: number;
+  nombre: string;
+  barrio: string | null;
+  activo: boolean;
+};
+
 export type LoginResponse = {
   token: string;
   nombre: string;
@@ -87,4 +95,15 @@ export type Evento = {
 /** Detalle de un partido con sus goles y tarjetas en orden de minuto (RF-10). */
 export type PartidoDetalle = Partido & {
   eventos: Evento[];
+};
+
+/** Lo que se manda al programar o modificar un partido (RF-06). fechaHoraInicio: "2026-11-07T15:00". */
+export type PartidoNuevo = {
+  torneoId: number;
+  numeroFecha: number;
+  equipoLocalId: number;
+  equipoVisitanteId: number;
+  canchaId: number;
+  arbitroId: number;
+  fechaHoraInicio: string;
 };
