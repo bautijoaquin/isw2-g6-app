@@ -1,4 +1,3 @@
-import { router } from 'expo-router';
 import { ComponentRef, useRef, useState } from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -7,6 +6,7 @@ import { mensajeDeError } from '@/api/client';
 import { useAuth } from '@/auth/AuthContext';
 import { AppText, Button, ErrorMessage, TextField } from '@/components';
 import { borders, colors, spacing } from '@/theme';
+import { volver } from '@/utils/navegacion';
 
 // RF-01: ingreso de administradores y delegados.
 export default function LoginScreen() {
@@ -30,8 +30,7 @@ export default function LoginScreen() {
     setError(null);
     try {
       await iniciarSesion(username, password);
-      if (router.canGoBack()) router.back();
-      else router.replace('/cuenta');
+      volver('/cuenta');
     } catch (e) {
       setError(mensajeDeError(e));
       setPassword('');
