@@ -27,6 +27,14 @@ export type Arbitro = {
   activo: boolean;
 };
 
+export type Equipo = {
+  id: number;
+  torneoId: number;
+  nombre: string;
+  barrio: string | null;
+  activo: boolean;
+};
+
 export type LoginResponse = {
   token: string;
   nombre: string;
@@ -49,9 +57,7 @@ export type UsuarioNuevo = {
   rol: Rol;
 };
 
-// Partido en vivo y cálculos (RF-10, RF-11, RF-12)
-
-/** Referencia corta a otra entidad (equipo, cancha, árbitro). */
+/** Referencia corta a un equipo, cancha o árbitro dentro de otra respuesta. */
 export type Resumen = {
   id: number;
   nombre: string;
@@ -59,22 +65,8 @@ export type Resumen = {
 
 export type EstadoPartido = 'PROGRAMADO' | 'EN_JUEGO' | 'FINALIZADO' | 'SUSPENDIDO';
 
-export type TipoEvento = 'GOL' | 'AMARILLA' | 'ROJA';
-
-export type Evento = {
-  id: number;
-  tipo: TipoEvento;
-  minuto: number;
-  jugadorId: number;
-  /** Nombre y apellido juntos. */
-  jugador: string;
-  numeroCamiseta: number | null;
-  /** Equipo del jugador: sirve para saber si el evento es del local o del visitante. */
-  equipoId: number;
-};
-
-/** El resultado no viene guardado: el backend lo calcula con los goles (RN-06). */
-export type PartidoDetalle = {
+/** Un partido del fixture (RF-10). El resultado lo calcula el backend con los goles. */
+export type Partido = {
   id: number;
   torneoId: number;
   numeroFecha: number;
@@ -84,25 +76,39 @@ export type PartidoDetalle = {
   golesVisitante: number;
   cancha: Resumen;
   arbitro: Resumen;
-  /** Fecha y hora local sin zona, por ejemplo "2026-10-26T15:00:00". */
   fechaHoraInicio: string;
   estado: EstadoPartido;
-  /** Ordenados por minuto. */
+};
+
+export type TipoEvento = 'GOL' | 'AMARILLA' | 'ROJA';
+
+export type Evento = {
+  id: number;
+  tipo: TipoEvento;
+  minuto: number;
+  jugadorId: number;
+  jugador: string;
+  numeroCamiseta: number | null;
+  equipoId: number;
+};
+
+/** Detalle de un partido con sus goles y tarjetas en orden de minuto (RF-10). */
+export type PartidoDetalle = Partido & {
   eventos: Evento[];
 };
 
-/** Un partido en el listado de una fecha: igual que el detalle pero sin árbitro ni eventos. */
-export type PartidoResumen = {
-  id: number;
+/** Lo que se manda al programar o modificar un partido (RF-06). fechaHoraInicio: "2026-11-07T15:00". */
+export type PartidoNuevo = {
+  torneoId: number;
   numeroFecha: number;
-  local: Resumen;
-  visitante: Resumen;
-  golesLocal: number;
-  golesVisitante: number;
-  cancha: Resumen;
+  equipoLocalId: number;
+  equipoVisitanteId: number;
+  canchaId: number;
+  arbitroId: number;
   fechaHoraInicio: string;
-  estado: EstadoPartido;
 };
+
+// Tabla y suspendidos (RF-11, RF-12)
 
 export type FilaTabla = {
   posicion: number;

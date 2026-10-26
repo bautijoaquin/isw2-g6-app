@@ -64,6 +64,7 @@ export default function RootLayout() {
           <Stack.Screen name="usuarios/nuevo" options={{ title: '' }} />
           <Stack.Screen name="usuarios/[id]" options={{ title: '' }} />
           <Stack.Screen name="partidos/[id]" options={{ title: '' }} />
+          <Stack.Screen name="partidos/programar" options={{ title: '' }} />
           <Stack.Screen name="en-vivo/[id]" options={{ title: '' }} />
         </Stack>
       </ThemeProvider>

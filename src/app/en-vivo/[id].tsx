@@ -4,7 +4,8 @@ import { Pressable, StyleSheet, TextInput, View } from 'react-native';
 
 import { mensajeDeError } from '@/api/client';
 import { borrarEvento, getJugadores, registrarEvento } from '@/api/eventos';
-import { getPartido, getSuspendidos } from '@/api/resultados';
+import { getPartido } from '@/api/partidos';
+import { getSuspendidos } from '@/api/resultados';
 import type { Evento, Jugador, PartidoDetalle, TipoEvento } from '@/api/types';
 import { RequiereRol } from '@/auth/SoloRol';
 import {
@@ -17,12 +18,12 @@ import {
   Loading,
   Screen,
   StatusChip,
+  estadoPartido,
 } from '@/components';
 import { useApi } from '@/hooks/useApi';
 import { borders, colors, fonts, spacing } from '@/theme';
 import { confirmar } from '@/utils/confirmar';
 import { minutoEstimado } from '@/utils/fechas';
-import { estadosPartido } from '@/utils/partidos';
 
 // RF-08 y RF-09: el delegado carga goles y tarjetas durante el partido y borra los cargados por error.
 // La app guía la carga, pero las reglas (RN-03, RN-04) las controla el backend y acá se muestra su respuesta.
@@ -274,7 +275,7 @@ function nombreTipo(tipo: TipoEvento) {
 }
 
 function Marcador({ partido }: { partido: PartidoDetalle }) {
-  const estado = estadosPartido[partido.estado];
+  const estado = estadoPartido[partido.estado];
   return (
     <Card style={styles.marcador}>
       <StatusChip label={estado.label} status={estado.status} />

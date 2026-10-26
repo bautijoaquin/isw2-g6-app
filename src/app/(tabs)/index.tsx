@@ -1,168 +1,83 @@
 import { router, useFocusEffect } from 'expo-router';
-import { useState } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { useCallback, useState } from 'react';
+import { StyleSheet, View } from 'react-native';
 
 import { getTorneos } from '@/api/catalogo';
-import { getPartidos } from '@/api/resultados';
-import type { PartidoResumen, Torneo } from '@/api/types';
-import { AppText, EmptyState, ErrorMessage, FilterChip, Loading, Screen, StatusChip } from '@/components';
+import { getPartidos } from '@/api/partidos';
+import type { Partido } from '@/api/types';
+import { SoloRol } from '@/auth/SoloRol';
+import { Button, EmptyState, ErrorMessage, FilterChip, Loading, PartidoCard, Screen } from '@/components';
 import { useApi } from '@/hooks/useApi';
-import { borders, colors, spacing } from '@/theme';
-import { formatearFechaHora } from '@/utils/fechas';
-import { estadosPartido } from '@/utils/partidos';
+import { spacing } from '@/theme';
 
-// RF-10: partidos de una fecha con su estado y resultado. Es público.
-// Tocando un partido se abre su detalle con los eventos.
+// RF-10: fixture del torneo en curso, por fecha. Es público, no hace falta ingresar.
 export default function PartidosScreen() {
-  const { data: torneos, error, recargar } = useApi(getTorneos);
-  const [elegido, setElegido] = useState<number | null>(null);
+  const torneos = useApi(getTorneos);
+  const torneo = torneos.data?.find((t) => t.activo) ?? torneos.data?.[0];
 
-  // Si no se eligió ninguno, se muestra el torneo en curso.
-  const torneoId = elegido ?? (torneos?.find((t) => t.activo) ?? torneos?.[0])?.id ?? null;
+  const partidos = useApi(() => (torneo ? getPartidos(torneo.id) : Promise.resolve([])), [torneo?.id]);
+  const [elegida, setElegida] = useState<number | null>(null);
 
-  if (torneoId === null) {
-    return (
-      <Screen overline="Liga Amateur Santafesina" title="Partidos" onRefresh={recargar}>
-        {error ? <ErrorMessage message={error} onRetry={recargar} /> : null}
-        {!torneos && !error ? <Loading /> : null}
-        {torneos?.length === 0 ? <EmptyState title="Todavía no hay torneos" /> : null}
-      </Screen>
-    );
-  }
+  // Al volver del detalle (por ejemplo, después de finalizar un partido) se actualiza el fixture.
+  const recargarPartidos = partidos.recargar;
+  useFocusEffect(useCallback(() => recargarPartidos(), [recargarPartidos]));
 
-  return <PartidosDelTorneo torneos={torneos ?? []} torneoId={torneoId} onElegir={setElegido} />;
-}
+  const fechas = [...new Set((partidos.data ?? []).map((p) => p.numeroFecha))];
+  const fecha = elegida ?? fechaParaMostrar(partidos.data ?? []);
+  const deLaFecha = (partidos.data ?? []).filter((p) => p.numeroFecha === fecha);
 
-function PartidosDelTorneo({
-  torneos,
-  torneoId,
-  onElegir,
-}: {
-  torneos: Torneo[];
-  torneoId: number;
-  onElegir: (id: number) => void;
-}) {
-  const { data: partidos, cargando, error, recargar } = useApi(() => getPartidos(torneoId), [torneoId]);
-  const [fechaElegida, setFechaElegida] = useState<number | null>(null);
-
-  // Al volver de un detalle se recarga: puede haber cambiado un resultado.
-  useFocusEffect(recargar);
-
-  // El backend los manda ordenados por fecha, así que las fechas quedan en orden.
-  const fechas = [...new Set((partidos ?? []).map((p) => p.numeroFecha))];
-  const fecha = fechaElegida ?? fechaActual(partidos ?? []);
-  const deLaFecha = (partidos ?? []).filter((p) => p.numeroFecha === fecha);
+  const error = torneos.error ?? partidos.error;
+  const cargando = torneos.cargando || partidos.cargando;
+  const recargar = () => (torneos.error ? torneos.recargar() : partidos.recargar());
 
   return (
-    <Screen overline="Liga Amateur Santafesina" title="Partidos" refreshing={cargando} onRefresh={recargar}>
-      {torneos.length > 1 ? (
-        <View style={styles.chips}>
-          {torneos.map((t) => (
-            <FilterChip
-              key={t.id}
-              label={t.nombre}
-              selected={t.id === torneoId}
-              onPress={() => {
-                onElegir(t.id);
-                setFechaElegida(null);
-              }}
-            />
-          ))}
-        </View>
-      ) : null}
-
+    <Screen
+      overline={torneo ? `${torneo.nombre} · ${torneo.anio}` : 'Liga Amateur Santafesina'}
+      title="Partidos"
+      refreshing={cargando}
+      onRefresh={recargar}
+      action={
+        <SoloRol roles={['ADMIN']}>
+          <Button title="Programar" size="small" onPress={() => router.push('/partidos/programar')} />
+        </SoloRol>
+      }>
       {error ? <ErrorMessage message={error} onRetry={recargar} /> : null}
-      {cargando && !partidos ? <Loading /> : null}
-      {partidos?.length === 0 ? (
-        <EmptyState title="Sin partidos" description="Todavía no hay partidos programados en este torneo." />
-      ) : null}
+      {cargando && !partidos.data ? <Loading /> : null}
 
       {fechas.length > 0 ? (
-        <View style={styles.chips}>
+        <View style={styles.fechas}>
           {fechas.map((n) => (
-            <FilterChip key={n} label={`Fecha ${n}`} selected={n === fecha} onPress={() => setFechaElegida(n)} />
+            <FilterChip key={n} label={`Fecha ${n}`} selected={n === fecha} onPress={() => setElegida(n)} />
           ))}
         </View>
+      ) : null}
+
+      {partidos.data && partidos.data.length === 0 ? (
+        <EmptyState title="Todavía no hay partidos" description="Cuando se programen, van a aparecer acá." />
       ) : null}
 
       {deLaFecha.map((p) => (
-        <TarjetaPartido key={p.id} partido={p} />
+        <PartidoCard
+          key={p.id}
+          partido={p}
+          onPress={() => router.push({ pathname: '/partidos/[id]', params: { id: String(p.id) } })}
+        />
       ))}
     </Screen>
   );
 }
 
-/**
- * Fecha que se muestra al abrir: la primera que todavía tiene partidos sin terminar.
- * Si ya terminaron todas, la última.
- */
-function fechaActual(partidos: PartidoResumen[]) {
+/** La primera fecha con partidos sin terminar; si ya se jugó todo, la última. */
+function fechaParaMostrar(partidos: Partido[]): number | null {
   const pendiente = partidos.find((p) => p.estado === 'PROGRAMADO' || p.estado === 'EN_JUEGO');
   return pendiente?.numeroFecha ?? partidos.at(-1)?.numeroFecha ?? null;
 }
 
-function TarjetaPartido({ partido }: { partido: PartidoResumen }) {
-  const estado = estadosPartido[partido.estado];
-
-  return (
-    <Pressable
-      accessibilityRole="button"
-      onPress={() => router.push({ pathname: '/partidos/[id]', params: { id: String(partido.id) } })}
-      style={({ pressed }) => [styles.tarjeta, pressed && styles.presionada]}>
-      <View style={styles.encabezado}>
-        <AppText variant="caption" color={colors.textSecondary} style={styles.flex}>
-          {formatearFechaHora(partido.fechaHoraInicio)} · {partido.cancha.nombre}
-        </AppText>
-        <StatusChip label={estado.label} status={estado.status} />
-      </View>
-      <FilaEquipo nombre={partido.local.nombre} goles={partido.golesLocal} />
-      <FilaEquipo nombre={partido.visitante.nombre} goles={partido.golesVisitante} />
-    </Pressable>
-  );
-}
-
-/** RF-10: un partido sin goles muestra 0 a 0, también si todavía no empezó. */
-function FilaEquipo({ nombre, goles }: { nombre: string; goles: number }) {
-  return (
-    <View style={styles.fila}>
-      <AppText variant="body" style={styles.flex}>
-        {nombre}
-      </AppText>
-      <AppText variant="subhead">{goles}</AppText>
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
-  chips: {
+  fechas: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: spacing.sm,
-    marginBottom: spacing.md,
-  },
-  tarjeta: {
-    borderWidth: borders.regular,
-    borderColor: colors.borderSubtle,
-    padding: spacing.md,
-    marginBottom: spacing.md,
-    gap: spacing.xs,
-  },
-  presionada: {
-    borderColor: colors.borderStrong,
-    backgroundColor: colors.surface,
-  },
-  encabezado: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-    marginBottom: spacing.xs,
-  },
-  fila: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-  },
-  flex: {
-    flex: 1,
+    marginBottom: spacing.sm,
   },
 });

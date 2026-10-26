@@ -1,15 +1,6 @@
 /**
- * El backend manda las fechas sin zona horaria ("2026-10-26T15:00:00"), en hora de Santa Fe.
- * Se cortan a mano para no depender de la zona horaria del celular.
- */
-export function formatearFechaHora(valor: string) {
-  const [dia, hora = ''] = valor.split('T');
-  const [anio, mes, d] = dia.split('-');
-  return `${d}/${mes}/${anio} ${hora.slice(0, 5)}`;
-}
-
-/**
  * Minuto de juego aproximado según la hora de inicio programada, entre 1 y 120.
+ * El backend manda la hora sin zona ("2026-10-26T15:00:00"), en hora de Santa Fe: se arma a mano.
  * Es solo el valor inicial del campo: el delegado lo corrige si el partido empezó tarde.
  */
 export function minutoEstimado(fechaHoraInicio: string, ahora = new Date()) {
