@@ -1,9 +1,10 @@
 import { router } from 'expo-router';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { useAuth } from '@/auth/AuthContext';
+import { SoloRol } from '@/auth/SoloRol';
 import { AppText, Button, Card, Loading, Screen, StatusChip } from '@/components';
-import { colors, spacing } from '@/theme';
+import { borders, colors, spacing } from '@/theme';
 
 const nombreRol = { ADMIN: 'Administrador', DELEGADO: 'Delegado' } as const;
 
@@ -44,6 +45,26 @@ export default function CuentaScreen() {
         <StatusChip label={nombreRol[sesion.rol]} status="neutral" />
       </Card>
 
+      {/* Cada uno suma acá el acceso a su módulo, dentro del SoloRol que corresponda. */}
+      <SoloRol roles={['ADMIN']}>
+        <View style={styles.seccion}>
+          <AppText variant="overline" color={colors.textSecondary} style={styles.tituloSeccion}>
+            Administración
+          </AppText>
+        </View>
+      </SoloRol>
+
+      <SoloRol roles={['DELEGADO']}>
+        <View style={styles.seccion}>
+          <AppText variant="overline" color={colors.textSecondary} style={styles.tituloSeccion}>
+            Delegado
+          </AppText>
+          <AppText variant="bodySmall" color={colors.textSecondary}>
+            Los goles y tarjetas se cargan desde el detalle de cada partido en juego.
+          </AppText>
+        </View>
+      </SoloRol>
+
       <Button title="Cerrar sesión" variant="secondary" onPress={cerrarSesion} />
     </Screen>
   );
@@ -57,5 +78,13 @@ const styles = StyleSheet.create({
   perfil: {
     marginBottom: spacing.lg,
     gap: spacing.sm,
+  },
+  seccion: {
+    marginBottom: spacing.xl,
+  },
+  tituloSeccion: {
+    paddingBottom: spacing.sm,
+    borderBottomWidth: borders.regular,
+    borderBottomColor: colors.borderStrong,
   },
 });
