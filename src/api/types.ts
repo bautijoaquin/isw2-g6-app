@@ -71,3 +71,20 @@ export type Partido = {
   fechaHoraInicio: string;
   estado: EstadoPartido;
 };
+
+export type TipoEvento = 'GOL' | 'AMARILLA' | 'ROJA';
+
+export type Evento = {
+  id: number;
+  tipo: TipoEvento;
+  minuto: number;
+  jugadorId: number;
+  jugador: string;
+  numeroCamiseta: number | null;
+  equipoId: number;
+};
+
+/** Detalle de un partido con sus goles y tarjetas en orden de minuto (RF-10). */
+export type PartidoDetalle = Partido & {
+  eventos: Evento[];
+};
