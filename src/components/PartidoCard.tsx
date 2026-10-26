@@ -19,7 +19,8 @@ export const estadoPartido: Record<EstadoPartido, { label: string; status: Statu
 /** Un partido del fixture: día, hora, cancha, estado y el marcador (o "vs" si todavía no empezó). */
 export function PartidoCard({ partido, onPress }: { partido: Partido; onPress?: () => void }) {
   const estado = estadoPartido[partido.estado];
-  const conResultado = partido.estado === 'EN_JUEGO' || partido.estado === 'FINALIZADO';
+  // RF-10: el resultado se calcula con los goles; uno que todavía no empezó muestra «vs».
+  const conResultado = partido.estado !== 'PROGRAMADO';
 
   return (
     <Pressable
