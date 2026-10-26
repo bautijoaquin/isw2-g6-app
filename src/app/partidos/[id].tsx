@@ -51,7 +51,7 @@ export default function DetallePartidoScreen() {
 
 function Marcador({ partido }: { partido: PartidoDetalle }) {
   const estado = estadoPartido[partido.estado];
-  const conResultado = partido.estado === 'EN_JUEGO' || partido.estado === 'FINALIZADO';
+  const conResultado = partido.estado !== 'PROGRAMADO';
   return (
     <Card variant="elevated">
       <StatusChip label={estado.label} status={estado.status} />
