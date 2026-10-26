@@ -5,7 +5,8 @@ import { StyleSheet, View } from 'react-native';
 import { getTorneos } from '@/api/catalogo';
 import { getPartidos } from '@/api/partidos';
 import type { Partido } from '@/api/types';
-import { EmptyState, ErrorMessage, FilterChip, Loading, PartidoCard, Screen } from '@/components';
+import { SoloRol } from '@/auth/SoloRol';
+import { Button, EmptyState, ErrorMessage, FilterChip, Loading, PartidoCard, Screen } from '@/components';
 import { useApi } from '@/hooks/useApi';
 import { spacing } from '@/theme';
 
@@ -34,7 +35,12 @@ export default function PartidosScreen() {
       overline={torneo ? `${torneo.nombre} · ${torneo.anio}` : 'Liga Amateur Santafesina'}
       title="Partidos"
       refreshing={cargando}
-      onRefresh={recargar}>
+      onRefresh={recargar}
+      action={
+        <SoloRol roles={['ADMIN']}>
+          <Button title="Programar" size="small" onPress={() => router.push('/partidos/programar')} />
+        </SoloRol>
+      }>
       {error ? <ErrorMessage message={error} onRetry={recargar} /> : null}
       {cargando && !partidos.data ? <Loading /> : null}
 

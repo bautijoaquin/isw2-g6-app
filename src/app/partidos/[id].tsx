@@ -1,15 +1,18 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { useLocalSearchParams } from 'expo-router';
-import { ComponentProps } from 'react';
+import { router, useLocalSearchParams } from 'expo-router';
+import { ComponentProps, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import { getPartido } from '@/api/partidos';
+import { mensajeDeError } from '@/api/client';
+import { eliminarPartido, getPartido } from '@/api/partidos';
 import type { Evento, PartidoDetalle, TipoEvento } from '@/api/types';
 import { SoloRol } from '@/auth/SoloRol';
-import { AccionesPartido, AppText, Card, EmptyState, ErrorMessage, Loading, Screen, StatusChip, estadoPartido } from '@/components';
+import { AccionesPartido, AppText, Button, Card, EmptyState, ErrorMessage, Loading, Screen, StatusChip, estadoPartido } from '@/components';
 import { useApi } from '@/hooks/useApi';
 import { colors, spacing } from '@/theme';
+import { confirmar } from '@/utils/confirmar';
 import { diaCorto, hora } from '@/utils/formato';
+import { volver } from '@/utils/navegacion';
 
 type Icono = ComponentProps<typeof MaterialCommunityIcons>['name'];
 
@@ -40,6 +43,11 @@ export default function DetallePartidoScreen() {
       <SoloRol roles={['ADMIN', 'DELEGADO']}>
         <AccionesPartido partido={partido} onCambio={recargar} />
       </SoloRol>
+      {partido.estado === 'PROGRAMADO' ? (
+        <SoloRol roles={['ADMIN']}>
+          <OpcionesAdmin partido={partido} />
+        </SoloRol>
+      ) : null}
 
       <AppText variant="overline" color={colors.textSecondary} style={styles.seccion}>
         Goles y tarjetas
@@ -51,6 +59,38 @@ export default function DetallePartidoScreen() {
         <FilaEvento key={e.id} evento={e} partido={partido} />
       ))}
     </Screen>
+  );
+}
+
+/** RF-06 y RN-07: solo un partido PROGRAMADO se modifica o se elimina. */
+function OpcionesAdmin({ partido }: { partido: PartidoDetalle }) {
+  const [eliminando, setEliminando] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function eliminar() {
+    const titulo = `¿Eliminar ${partido.local.nombre} vs ${partido.visitante.nombre}?`;
+    if (!(await confirmar(titulo, 'El partido se borra del fixture.', 'Eliminar'))) return;
+    setEliminando(true);
+    setError(null);
+    try {
+      await eliminarPartido(partido.id);
+      volver('/');
+    } catch (e) {
+      setError(mensajeDeError(e));
+      setEliminando(false);
+    }
+  }
+
+  return (
+    <View style={styles.opciones}>
+      {error ? <ErrorMessage message={error} /> : null}
+      <Button
+        title="Modificar"
+        variant="secondary"
+        onPress={() => router.push({ pathname: '/partidos/programar', params: { id: String(partido.id) } })}
+      />
+      <Button title="Eliminar" variant="ghost" onPress={eliminar} loading={eliminando} />
+    </View>
   );
 }
 
@@ -120,6 +160,10 @@ const styles = StyleSheet.create({
   goles: {
     minWidth: 90,
     textAlign: 'center',
+  },
+  opciones: {
+    gap: spacing.sm,
+    marginTop: spacing.sm,
   },
   seccion: {
     marginTop: spacing.xl,
