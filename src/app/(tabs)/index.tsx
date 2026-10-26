@@ -1,3 +1,4 @@
+import { router } from 'expo-router';
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
@@ -46,7 +47,11 @@ export default function PartidosScreen() {
       ) : null}
 
       {deLaFecha.map((p) => (
-        <PartidoCard key={p.id} partido={p} />
+        <PartidoCard
+          key={p.id}
+          partido={p}
+          onPress={() => router.push({ pathname: '/partidos/[id]', params: { id: String(p.id) } })}
+        />
       ))}
     </Screen>
   );
