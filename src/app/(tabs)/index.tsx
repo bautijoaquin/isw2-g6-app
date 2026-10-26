@@ -1,50 +1,73 @@
+import { router } from 'expo-router';
+import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { getTorneos } from '@/api/catalogo';
-import { AppText, Card, EmptyState, ErrorMessage, Loading, Screen, StatusChip } from '@/components';
+import { getPartidos } from '@/api/partidos';
+import type { Partido } from '@/api/types';
+import { EmptyState, ErrorMessage, FilterChip, Loading, PartidoCard, Screen } from '@/components';
 import { useApi } from '@/hooks/useApi';
-import { colors, spacing } from '@/theme';
+import { spacing } from '@/theme';
 
-// Fixture y partidos por fecha (RF-10): a cargo de Scolari.
-// Por ahora muestra los torneos para comprobar la conexión con el backend.
+// RF-10: fixture del torneo en curso, por fecha. Es público, no hace falta ingresar.
 export default function PartidosScreen() {
-  const { data: torneos, cargando, error, recargar } = useApi(getTorneos);
+  const torneos = useApi(getTorneos);
+  const torneo = torneos.data?.find((t) => t.activo) ?? torneos.data?.[0];
+
+  const partidos = useApi(() => (torneo ? getPartidos(torneo.id) : Promise.resolve([])), [torneo?.id]);
+  const [elegida, setElegida] = useState<number | null>(null);
+
+  const fechas = [...new Set((partidos.data ?? []).map((p) => p.numeroFecha))];
+  const fecha = elegida ?? fechaParaMostrar(partidos.data ?? []);
+  const deLaFecha = (partidos.data ?? []).filter((p) => p.numeroFecha === fecha);
+
+  const error = torneos.error ?? partidos.error;
+  const cargando = torneos.cargando || partidos.cargando;
+  const recargar = () => (torneos.error ? torneos.recargar() : partidos.recargar());
 
   return (
-    <Screen overline="Liga Amateur Santafesina" title="Partidos" refreshing={cargando} onRefresh={recargar}>
+    <Screen
+      overline={torneo ? `${torneo.nombre} · ${torneo.anio}` : 'Liga Amateur Santafesina'}
+      title="Partidos"
+      refreshing={cargando}
+      onRefresh={recargar}>
       {error ? <ErrorMessage message={error} onRetry={recargar} /> : null}
-      {cargando && !torneos ? <Loading /> : null}
+      {cargando && !partidos.data ? <Loading /> : null}
 
-      {torneos?.map((t) => (
-        <Card key={t.id} style={styles.card}>
-          <View style={styles.row}>
-            <View style={styles.flex}>
-              <AppText variant="overline" color={colors.textSecondary}>
-                Torneo {t.anio}
-              </AppText>
-              <AppText variant="subhead">{t.nombre}</AppText>
-            </View>
-            <StatusChip label={t.activo ? 'En curso' : 'Cerrado'} status={t.activo ? 'success' : 'neutral'} />
-          </View>
-        </Card>
+      {fechas.length > 0 ? (
+        <View style={styles.fechas}>
+          {fechas.map((n) => (
+            <FilterChip key={n} label={`Fecha ${n}`} selected={n === fecha} onPress={() => setElegida(n)} />
+          ))}
+        </View>
+      ) : null}
+
+      {partidos.data && partidos.data.length === 0 ? (
+        <EmptyState title="Todavía no hay partidos" description="Cuando se programen, van a aparecer acá." />
+      ) : null}
+
+      {deLaFecha.map((p) => (
+        <PartidoCard
+          key={p.id}
+          partido={p}
+          onPress={() => router.push({ pathname: '/partidos/[id]', params: { id: String(p.id) } })}
+        />
       ))}
-
-      <EmptyState title="Fixture" description="Acá van los partidos de cada fecha (RF-10)." />
     </Screen>
   );
 }
 
+/** La primera fecha con partidos sin terminar; si ya se jugó todo, la última. */
+function fechaParaMostrar(partidos: Partido[]): number | null {
+  const pendiente = partidos.find((p) => p.estado === 'PROGRAMADO' || p.estado === 'EN_JUEGO');
+  return pendiente?.numeroFecha ?? partidos.at(-1)?.numeroFecha ?? null;
+}
+
 const styles = StyleSheet.create({
-  card: {
-    marginBottom: spacing.md,
-  },
-  row: {
+  fechas: {
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-  },
-  flex: {
-    flex: 1,
-    gap: spacing.xs,
+    flexWrap: 'wrap',
+    gap: spacing.sm,
+    marginBottom: spacing.sm,
   },
 });

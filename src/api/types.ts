@@ -49,15 +49,30 @@ export type UsuarioNuevo = {
   rol: Rol;
 };
 
-// Partido en vivo y cálculos (RF-10, RF-11, RF-12)
-
-/** Referencia corta a otra entidad (equipo, cancha, árbitro). */
+/** Referencia corta a un equipo, cancha o árbitro dentro de otra respuesta. */
 export type Resumen = {
   id: number;
   nombre: string;
 };
 
 export type EstadoPartido = 'PROGRAMADO' | 'EN_JUEGO' | 'FINALIZADO' | 'SUSPENDIDO';
+
+/** Un partido del fixture (RF-10). El resultado lo calcula el backend con los goles. */
+export type Partido = {
+  id: number;
+  torneoId: number;
+  numeroFecha: number;
+  local: Resumen;
+  visitante: Resumen;
+  golesLocal: number;
+  golesVisitante: number;
+  cancha: Resumen;
+  arbitro: Resumen;
+  fechaHoraInicio: string;
+  estado: EstadoPartido;
+};
+
+// Partido en vivo y cálculos (RF-10, RF-11, RF-12)
 
 export type TipoEvento = 'GOL' | 'AMARILLA' | 'ROJA';
 
@@ -73,21 +88,8 @@ export type Evento = {
   equipoId: number;
 };
 
-/** El resultado no viene guardado: el backend lo calcula con los goles (RN-06). */
-export type PartidoDetalle = {
-  id: number;
-  torneoId: number;
-  numeroFecha: number;
-  local: Resumen;
-  visitante: Resumen;
-  golesLocal: number;
-  golesVisitante: number;
-  cancha: Resumen;
-  arbitro: Resumen;
-  /** Fecha y hora local sin zona, por ejemplo "2026-10-26T15:00:00". */
-  fechaHoraInicio: string;
-  estado: EstadoPartido;
-  /** Ordenados por minuto. */
+/** Detalle de un partido: lo mismo que en el fixture más sus eventos, ordenados por minuto. */
+export type PartidoDetalle = Partido & {
   eventos: Evento[];
 };
 
