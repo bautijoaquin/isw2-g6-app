@@ -107,3 +107,31 @@ export type PartidoNuevo = {
   arbitroId: number;
   fechaHoraInicio: string;
 };
+
+// Tabla y suspendidos (RF-11, RF-12)
+
+export type FilaTabla = {
+  posicion: number;
+  equipoId: number;
+  equipo: string;
+  pj: number;
+  pg: number;
+  pe: number;
+  pp: number;
+  gf: number;
+  gc: number;
+  dg: number;
+  pts: number;
+};
+
+export type Suspendido = {
+  jugadorId: number;
+  nombre: string;
+  apellido: string;
+  numeroCamiseta: number | null;
+  equipoId: number;
+  equipo: string;
+  motivo: 'ROJA' | 'DOBLE_AMARILLA';
+  /** Fecha en la que recibió la tarjeta (la anterior a la consultada). */
+  fechaSancion: number;
+};
