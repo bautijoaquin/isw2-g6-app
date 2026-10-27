@@ -42,6 +42,15 @@ export default function DetallePartidoScreen() {
       <Marcador partido={partido} />
       <SoloRol roles={['ADMIN', 'DELEGADO']}>
         <AccionesPartido partido={partido} onCambio={recargar} />
+        {/* RF-08: los goles y tarjetas se cargan solo con el partido en juego */}
+        {partido.estado === 'EN_JUEGO' ? (
+          <Button
+            title="Cargar goles y tarjetas"
+            size="large"
+            onPress={() => router.push({ pathname: '/en-vivo/[id]', params: { id: String(partido.id) } })}
+            style={styles.cargar}
+          />
+        ) : null}
       </SoloRol>
       {partido.estado === 'PROGRAMADO' ? (
         <SoloRol roles={['ADMIN']}>
@@ -160,6 +169,9 @@ const styles = StyleSheet.create({
   goles: {
     minWidth: 90,
     textAlign: 'center',
+  },
+  cargar: {
+    marginTop: spacing.sm,
   },
   opciones: {
     gap: spacing.sm,
