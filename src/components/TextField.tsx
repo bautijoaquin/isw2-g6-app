@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { ComponentRef, Ref, useState } from 'react';
 import { StyleSheet, TextInput, TextInputProps, View } from 'react-native';
 
 import { borders, colors, fonts, spacing } from '@/theme';
@@ -6,6 +6,7 @@ import { borders, colors, fonts, spacing } from '@/theme';
 import { AppText } from './AppText';
 
 type Props = TextInputProps & {
+  ref?: Ref<ComponentRef<typeof TextInput>>;
   label: string;
   error?: string;
   helper?: string;

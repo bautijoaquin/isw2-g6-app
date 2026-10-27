@@ -43,7 +43,12 @@ Usuario inicial: `admin` / `Admin2026!`
 ```
 src/
 ├── app/                 Pantallas. Cada archivo es una ruta (Expo Router)
-│   ├── _layout.tsx      Raíz: fuentes, tema y navegación
+│   ├── _layout.tsx      Raíz: fuentes, tema, sesión y navegación
+│   ├── login.tsx        Ingreso (RF-01)
+│   ├── usuarios/        ABM de usuarios, solo admin (RF-02)
+│   ├── partidos/        Detalle, estados y programar partidos (RF-06, RF-07, RF-10)
+│   ├── equipos/         Plantel de un equipo y alta/edición de equipos (RF-03, RF-04)
+│   ├── jugadores/       Alta, edición y baja de jugadores, solo admin (RF-04)
 │   └── (tabs)/          Pestañas: Partidos, Tabla, Equipos, Cuenta
 ├── api/                 Llamadas al backend
 │   ├── client.ts        api(): agrega el token y convierte errores en ApiError
@@ -51,7 +56,9 @@ src/
 │   ├── types.ts         Tipos de los JSON (iguales a los DTO del backend)
 │   └── catalogo.ts      Un archivo por módulo: torneos, canchas, árbitros...
 ├── components/          Componentes de UI reutilizables (Button, Card, TextField...)
+├── auth/                Sesión (AuthContext) y permisos por rol (SoloRol, RequiereRol)
 ├── hooks/useApi.ts      Cargar datos con cargando / error / recargar
+├── utils/               confirmar() antes de acciones importantes, volver()
 └── theme/               Colores, fuentes y espaciado (sale de docs/DESIGN.md)
 ```
 
@@ -69,6 +76,26 @@ src/
    ```
 3. Para enviar datos: `await api('/api/equipos', 'POST', { nombre, barrio })` dentro de un `try/catch`,
    y mostrar `mensajeDeError(e)` si falla (por ejemplo los 409 de las reglas de negocio).
+
+### Sesión y permisos por rol
+
+```tsx
+import { useAuth } from '@/auth/AuthContext';
+import { RequiereRol, SoloRol } from '@/auth/SoloRol';
+
+const { sesion, tieneRol } = useAuth();      // sesion: { token, nombre, rol } o null
+
+<SoloRol roles={['ADMIN']}>                  // solo lo ve el admin
+  <Button title="Nuevo equipo" ... />
+</SoloRol>
+
+<RequiereRol roles={['ADMIN', 'DELEGADO']} titulo="Cargar eventos">
+  ...pantalla protegida...
+</RequiereRol>
+```
+
+El token se agrega solo en cada pedido. Si el backend responde 401, la sesión se cierra y la app pide ingresar de nuevo.
+Ocultar botones es solo para la experiencia de uso: el control real lo hace el backend (RNF-07).
 
 ### Estilo (docs/DESIGN.md)
 
