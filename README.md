@@ -100,9 +100,9 @@ Ocultar botones es solo para la experiencia de uso: el control real lo hace el b
 ### Estilo (docs/DESIGN.md)
 
 - Usar **siempre** los componentes de `src/components` y los tokens de `src/theme`. No escribir colores sueltos.
-- Blanco y negro, bordes de 2px, **sin bordes redondeados ni sombras**.
-- El rojo (`colors.accent`) es para **un solo elemento por pantalla**.
-- Títulos con `<Screen title="...">` (Archivo Black); el resto, Work Sans vía `<AppText>`.
+- Tema oscuro con tarjetas redondeadas; el acento es el degradado verde (`gradients.primary`).
+- El rojo (`colors.accent`) es solo para **"En vivo"** y acciones destructivas.
+- Una sola fuente, Urbanist, siempre vía `<AppText>` y `<Screen title="...">`.
 
 ## Flujo de trabajo con Git
 

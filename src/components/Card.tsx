@@ -1,9 +1,9 @@
 import { StyleSheet, View, ViewProps } from 'react-native';
 
-import { borders, colors, spacing } from '@/theme';
+import { borders, colors, radius, spacing } from '@/theme';
 
 type Props = ViewProps & {
-  /** "elevated" agrega la franja roja arriba: usarla para lo destacado. */
+  /** "elevated" agrega el borde verde: usarla para lo destacado. */
   variant?: 'default' | 'elevated';
 };
 
@@ -13,14 +13,13 @@ export function Card({ variant = 'default', style, ...props }: Props) {
 
 const styles = StyleSheet.create({
   base: {
-    backgroundColor: colors.background,
+    backgroundColor: colors.surface,
     borderWidth: borders.regular,
     borderColor: colors.borderSubtle,
-    borderRadius: 0,
+    borderRadius: radius.lg,
     padding: spacing.lg,
   },
   elevated: {
-    borderTopWidth: borders.heavy,
-    borderTopColor: colors.accent,
+    borderColor: 'rgba(127,229,128,0.35)',
   },
 });

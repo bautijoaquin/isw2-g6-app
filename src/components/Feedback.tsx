@@ -1,6 +1,6 @@
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
-import { borders, colors, spacing } from '@/theme';
+import { borders, colors, radius, spacing } from '@/theme';
 
 import { AppText } from './AppText';
 import { Button } from './Button';
@@ -41,9 +41,10 @@ export function Loading() {
 
 const styles = StyleSheet.create({
   error: {
-    borderLeftWidth: borders.heavy,
-    borderLeftColor: colors.error,
+    borderWidth: borders.thin,
+    borderColor: 'rgba(229,50,45,0.4)',
     backgroundColor: colors.errorBg,
+    borderRadius: radius.md,
     padding: spacing.md,
     marginBottom: spacing.md,
     gap: spacing.sm,
@@ -52,9 +53,10 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   empty: {
-    borderWidth: borders.regular,
+    backgroundColor: colors.surface,
+    borderWidth: borders.thin,
     borderColor: colors.borderSubtle,
-    borderStyle: 'dashed',
+    borderRadius: radius.lg,
     padding: spacing.lg,
     gap: spacing.sm,
   },
