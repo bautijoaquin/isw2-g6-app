@@ -47,6 +47,8 @@ src/
 │   ├── login.tsx        Ingreso (RF-01)
 │   ├── usuarios/        ABM de usuarios, solo admin (RF-02)
 │   ├── partidos/        Detalle, estados y programar partidos (RF-06, RF-07, RF-10)
+│   ├── equipos/         Plantel de un equipo y alta/edición de equipos (RF-03, RF-04)
+│   ├── jugadores/       Alta, edición y baja de jugadores, solo admin (RF-04)
 │   └── (tabs)/          Pestañas: Partidos, Tabla, Equipos, Cuenta
 ├── api/                 Llamadas al backend
 │   ├── client.ts        api(): agrega el token y convierte errores en ApiError

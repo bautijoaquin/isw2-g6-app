@@ -149,6 +149,24 @@ export type Jugador = {
   activo: boolean;
 };
 
+// Equipos y jugadores (RF-03, RF-04)
+
+export type EquipoNuevo = {
+  torneoId: number;
+  nombre: string;
+  barrio: string | null;
+};
+
+export type JugadorNuevo = {
+  equipoId: number;
+  nombre: string;
+  apellido: string;
+  /** 7 u 8 dígitos, sin puntos. */
+  dni: string;
+  /** De 1 a 99, opcional. */
+  numeroCamiseta: number | null;
+};
+
 export type EventoNuevo = {
   jugadorId: number;
   tipo: TipoEvento;
