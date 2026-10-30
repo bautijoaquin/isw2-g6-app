@@ -2,7 +2,7 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { ComponentProps, ReactNode } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 
-import { borders, colors, spacing } from '@/theme';
+import { borders, colors, radius, spacing } from '@/theme';
 
 import { AppText } from './AppText';
 
@@ -23,7 +23,11 @@ export function ListItem({ title, subtitle, icon, right, onPress }: Props) {
       disabled={!onPress}
       onPress={onPress}
       style={({ pressed }) => [styles.item, pressed && styles.pressed]}>
-      {icon ? <MaterialCommunityIcons name={icon} size={20} color={colors.text} /> : null}
+      {icon ? (
+        <View style={styles.icono}>
+          <MaterialCommunityIcons name={icon} size={20} color={colors.primary} />
+        </View>
+      ) : null}
       <View style={styles.texts}>
         <AppText variant="body">{title}</AppText>
         {subtitle ? (
@@ -44,12 +48,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: spacing.md,
     paddingVertical: 14,
-    paddingHorizontal: spacing.xs,
-    borderBottomWidth: borders.thin,
-    borderBottomColor: colors.borderSubtle,
+    paddingHorizontal: spacing.md,
+    marginBottom: spacing.sm,
+    backgroundColor: colors.surface,
+    borderWidth: borders.thin,
+    borderColor: colors.borderSubtle,
+    borderRadius: radius.md,
   },
   pressed: {
-    backgroundColor: colors.surface,
+    backgroundColor: colors.surfaceRaised,
+  },
+  icono: {
+    width: 40,
+    height: 40,
+    borderRadius: radius.pill,
+    backgroundColor: colors.surfaceRaised,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   texts: {
     flex: 1,

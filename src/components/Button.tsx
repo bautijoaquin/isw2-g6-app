@@ -1,6 +1,7 @@
+import { LinearGradient } from 'expo-linear-gradient';
 import { ActivityIndicator, Pressable, StyleSheet, ViewStyle } from 'react-native';
 
-import { borders, colors, fonts } from '@/theme';
+import { borders, colors, fonts, gradients, radius } from '@/theme';
 
 import { AppText } from './AppText';
 
@@ -17,34 +18,34 @@ type Props = {
   style?: ViewStyle;
 };
 
-/** Colores de cada variante: [normal, presionado]. */
+/** Colores de cada variante: [normal, presionado]. El primario lleva además el degradado de fondo. */
 const palette: Record<Variant, { bg: [string, string]; border: [string, string]; text: [string, string] }> = {
   primary: {
-    bg: [colors.primary, colors.accent],
-    border: [colors.primary, colors.accent],
+    bg: ['transparent', 'transparent'],
+    border: ['transparent', 'transparent'],
     text: [colors.textInverse, colors.textInverse],
   },
   secondary: {
-    bg: ['transparent', colors.primary],
-    border: [colors.primary, colors.primary],
-    text: [colors.text, colors.textInverse],
+    bg: [colors.surfaceRaised, colors.surface],
+    border: [colors.borderMedium, colors.borderStrong],
+    text: [colors.text, colors.text],
   },
   ghost: {
     bg: ['transparent', 'transparent'],
     border: ['transparent', 'transparent'],
-    text: [colors.text, colors.accent],
+    text: [colors.textSecondary, colors.primary],
   },
   destructive: {
     bg: [colors.accent, colors.accentPressed],
     border: [colors.accent, colors.accentPressed],
-    text: [colors.textInverse, colors.textInverse],
+    text: [colors.text, colors.text],
   },
 };
 
-const sizes: Record<Size, { paddingVertical: number; paddingHorizontal: number; fontSize: number }> = {
-  small: { paddingVertical: 6, paddingHorizontal: 16, fontSize: 12 },
-  medium: { paddingVertical: 12, paddingHorizontal: 24, fontSize: 14 },
-  large: { paddingVertical: 16, paddingHorizontal: 32, fontSize: 16 },
+const sizes: Record<Size, { paddingVertical: number; paddingHorizontal: number; fontSize: number; minHeight: number }> = {
+  small: { paddingVertical: 6, paddingHorizontal: 16, fontSize: 13, minHeight: 36 },
+  medium: { paddingVertical: 12, paddingHorizontal: 24, fontSize: 15, minHeight: 48 },
+  large: { paddingVertical: 16, paddingHorizontal: 32, fontSize: 16, minHeight: 56 },
 };
 
 export function Button({
@@ -75,20 +76,30 @@ export function Button({
             borderColor: p.border[i],
             paddingVertical: s.paddingVertical,
             paddingHorizontal: s.paddingHorizontal,
+            minHeight: s.minHeight,
           },
+          variant === 'primary' && pressed && styles.pressed,
           disabled && styles.disabled,
           style,
         ];
       }}>
-      {({ pressed }) =>
-        loading ? (
-          <ActivityIndicator color={p.text[0]} size="small" />
-        ) : (
-          <AppText style={[styles.label, { fontSize: s.fontSize, color: p.text[pressed ? 1 : 0] }]}>
-            {title}
-          </AppText>
-        )
-      }
+      {({ pressed }) => (
+        <>
+          {variant === 'primary' ? (
+            <LinearGradient
+              colors={gradients.primary}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={StyleSheet.absoluteFill}
+            />
+          ) : null}
+          {loading ? (
+            <ActivityIndicator color={p.text[0]} size="small" />
+          ) : (
+            <AppText style={[styles.label, { fontSize: s.fontSize, color: p.text[pressed ? 1 : 0] }]}>{title}</AppText>
+          )}
+        </>
+      )}
     </Pressable>
   );
 }
@@ -96,15 +107,17 @@ export function Button({
 const styles = StyleSheet.create({
   base: {
     borderWidth: borders.regular,
-    borderRadius: 0,
+    borderRadius: radius.pill,
+    overflow: 'hidden',
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: 44,
   },
   label: {
-    fontFamily: fonts.bodyBold,
-    textTransform: 'uppercase',
-    letterSpacing: 0.9,
+    fontFamily: fonts.bodySemiBold,
+    letterSpacing: 0.2,
+  },
+  pressed: {
+    opacity: 0.85,
   },
   disabled: {
     opacity: 0.35,

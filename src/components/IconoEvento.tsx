@@ -6,7 +6,7 @@ import { colors } from '@/theme';
 
 /**
  * Pelota para el gol; rectángulo amarillo o rojo para las tarjetas.
- * `color` es el de la pelota: blanco cuando va sobre un botón seleccionado (negro).
+ * `color` es el de la pelota: oscuro cuando va sobre un botón seleccionado (verde).
  */
 export function IconoEvento({
   tipo,
@@ -33,6 +33,6 @@ export function IconoEvento({
 
 const styles = StyleSheet.create({
   tarjeta: {
-    borderRadius: 0,
+    borderRadius: 3,
   },
 });
