@@ -1,8 +1,9 @@
 import { ReactNode } from 'react';
+import { LinearGradient } from 'expo-linear-gradient';
 import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { borders, colors, spacing } from '@/theme';
+import { colors, gradients, spacing } from '@/theme';
 
 import { AppText } from './AppText';
 
@@ -19,7 +20,7 @@ type Props = {
   onRefresh?: () => void;
 };
 
-/** Contenedor estándar de cada pantalla: área segura, encabezado editorial y scroll. */
+/** Contenedor estándar de cada pantalla: área segura, brillo verde arriba, encabezado y scroll. */
 export function Screen({ overline, title, action, children, scroll = true, refreshing, onRefresh }: Props) {
   const header = title ? (
     <View style={styles.header}>
@@ -39,6 +40,7 @@ export function Screen({ overline, title, action, children, scroll = true, refre
 
   return (
     <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}>
+      <LinearGradient colors={gradients.glow} style={styles.glow} pointerEvents="none" />
       {scroll ? (
         <ScrollView
           contentContainerStyle={styles.content}
@@ -66,9 +68,16 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
+  glow: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 260,
+  },
   content: {
     padding: spacing.md,
-    paddingBottom: spacing.xxl,
+    paddingBottom: 120,
   },
   fill: {
     flex: 1,
@@ -76,12 +85,10 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: 'row',
-    alignItems: 'flex-end',
+    alignItems: 'center',
     gap: spacing.md,
-    paddingBottom: spacing.md,
+    paddingTop: spacing.sm,
     marginBottom: spacing.lg,
-    borderBottomWidth: borders.heavy,
-    borderBottomColor: colors.borderStrong,
   },
   headerText: {
     flex: 1,

@@ -21,7 +21,7 @@ import {
   estadoPartido,
 } from '@/components';
 import { useApi } from '@/hooks/useApi';
-import { borders, colors, fonts, spacing } from '@/theme';
+import { borders, colors, fonts, radius, spacing } from '@/theme';
 import { confirmar } from '@/utils/confirmar';
 import { minutoEstimado } from '@/utils/fechas';
 
@@ -348,7 +348,6 @@ function BotonGrande({
 
 const styles = StyleSheet.create({
   marcador: {
-    borderColor: colors.borderStrong,
     gap: spacing.xs,
     marginBottom: spacing.lg,
   },
@@ -384,8 +383,10 @@ const styles = StyleSheet.create({
   },
   botonGrande: {
     minHeight: 64,
-    borderWidth: borders.regular,
-    borderColor: colors.borderStrong,
+    backgroundColor: colors.surface,
+    borderWidth: borders.thin,
+    borderColor: colors.borderSubtle,
+    borderRadius: radius.md,
     alignItems: 'center',
     justifyContent: 'center',
     gap: spacing.xs,
@@ -393,6 +394,7 @@ const styles = StyleSheet.create({
   },
   botonSeleccionado: {
     backgroundColor: colors.primary,
+    borderColor: colors.primary,
   },
   botonDeshabilitado: {
     opacity: 0.35,
@@ -405,8 +407,10 @@ const styles = StyleSheet.create({
     // Sin esto, en web el campo no se achica y empuja el botón + fuera de la pantalla
     minWidth: 0,
     alignSelf: 'stretch',
-    borderWidth: borders.regular,
-    borderColor: colors.borderStrong,
+    backgroundColor: colors.surface,
+    borderWidth: borders.thin,
+    borderColor: colors.borderSubtle,
+    borderRadius: radius.md,
     textAlign: 'center',
     fontFamily: fonts.display,
     fontSize: 28,

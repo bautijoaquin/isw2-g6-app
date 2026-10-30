@@ -17,7 +17,7 @@ import {
   StatusChip,
 } from '@/components';
 import { useApi } from '@/hooks/useApi';
-import { borders, colors, fonts, spacing } from '@/theme';
+import { borders, colors, fonts, radius, spacing } from '@/theme';
 
 // RF-11: tabla de posiciones y RF-12: suspendidos de una fecha. Son públicas, no piden sesión.
 // El backend ya manda la tabla calculada y ordenada: la app solo la muestra (RN-06).
@@ -194,21 +194,22 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
   },
   tabla: {
-    borderWidth: borders.regular,
-    borderColor: colors.borderStrong,
+    backgroundColor: colors.surface,
+    borderWidth: borders.thin,
+    borderColor: colors.borderSubtle,
+    borderRadius: radius.lg,
+    overflow: 'hidden',
   },
   fila: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 10,
-    paddingHorizontal: spacing.xs,
+    paddingVertical: 12,
+    paddingHorizontal: spacing.sm,
     borderBottomWidth: borders.thin,
     borderBottomColor: colors.borderSubtle,
   },
   encabezado: {
-    backgroundColor: colors.surface,
-    borderBottomWidth: borders.regular,
-    borderBottomColor: colors.borderStrong,
+    backgroundColor: colors.surfaceRaised,
   },
   posicion: {
     width: 20,
@@ -223,6 +224,7 @@ const styles = StyleSheet.create({
   },
   puntos: {
     fontFamily: fonts.bodyBold,
+    color: colors.primary,
   },
   seccion: {
     marginTop: spacing.xl,

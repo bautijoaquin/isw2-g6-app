@@ -1,7 +1,7 @@
 import { ComponentRef, Ref, useState } from 'react';
 import { StyleSheet, TextInput, TextInputProps, View } from 'react-native';
 
-import { borders, colors, fonts, spacing } from '@/theme';
+import { borders, colors, fonts, radius, spacing } from '@/theme';
 
 import { AppText } from './AppText';
 
@@ -16,7 +16,7 @@ type Props = TextInputProps & {
 export function TextField({ label, error, helper, editable = true, style, ...props }: Props) {
   const [focused, setFocused] = useState(false);
 
-  const borderColor = error ? colors.error : focused ? colors.borderStrong : colors.borderMedium;
+  const borderColor = error ? colors.error : focused ? colors.primary : colors.borderSubtle;
 
   return (
     <View style={styles.wrapper}>
@@ -58,18 +58,17 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   input: {
-    minHeight: 48,
-    backgroundColor: colors.background,
+    minHeight: 52,
+    backgroundColor: colors.surface,
     borderWidth: borders.regular,
-    borderRadius: 0,
-    paddingHorizontal: 14,
+    borderRadius: radius.md,
+    paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
     fontFamily: fonts.body,
     fontSize: 16,
     color: colors.text,
   },
   disabled: {
-    backgroundColor: colors.surface,
     opacity: 0.5,
   },
   helper: {

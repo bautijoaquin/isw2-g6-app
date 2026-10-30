@@ -1,12 +1,11 @@
-import { ArchivoBlack_400Regular } from '@expo-google-fonts/archivo-black';
 import { SpaceMono_400Regular } from '@expo-google-fonts/space-mono';
 import {
-  WorkSans_400Regular,
-  WorkSans_500Medium,
-  WorkSans_600SemiBold,
-  WorkSans_700Bold,
-} from '@expo-google-fonts/work-sans';
-import { DefaultTheme, Stack, ThemeProvider } from 'expo-router';
+  Urbanist_500Medium,
+  Urbanist_600SemiBold,
+  Urbanist_700Bold,
+  Urbanist_800ExtraBold,
+} from '@expo-google-fonts/urbanist';
+import { DarkTheme, Stack, ThemeProvider } from 'expo-router';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
@@ -18,24 +17,23 @@ import { colors, fonts } from '@/theme';
 SplashScreen.preventAutoHideAsync();
 
 const navTheme = {
-  ...DefaultTheme,
+  ...DarkTheme,
   colors: {
-    ...DefaultTheme.colors,
-    primary: colors.accent,
+    ...DarkTheme.colors,
+    primary: colors.primary,
     background: colors.background,
     card: colors.background,
     text: colors.text,
-    border: colors.borderStrong,
+    border: colors.borderSubtle,
   },
 };
 
 export default function RootLayout() {
   const [fuentesListas, errorFuentes] = useFonts({
-    ArchivoBlack_400Regular,
-    WorkSans_400Regular,
-    WorkSans_500Medium,
-    WorkSans_600SemiBold,
-    WorkSans_700Bold,
+    Urbanist_500Medium,
+    Urbanist_600SemiBold,
+    Urbanist_700Bold,
+    Urbanist_800ExtraBold,
     SpaceMono_400Regular,
   });
 
@@ -48,13 +46,13 @@ export default function RootLayout() {
   return (
     <AuthProvider>
       <ThemeProvider value={navTheme}>
-        <StatusBar style="dark" />
+        <StatusBar style="light" />
         <Stack
           screenOptions={{
             headerShadowVisible: false,
-            headerStyle: { backgroundColor: colors.background },
+            headerStyle: { backgroundColor: colors.header },
             headerTintColor: colors.text,
-            headerTitleStyle: { fontFamily: fonts.display, fontSize: 18 },
+            headerTitleStyle: { fontFamily: fonts.bodyBold, fontSize: 18 },
             headerBackButtonDisplayMode: 'minimal',
             contentStyle: { backgroundColor: colors.background },
           }}>

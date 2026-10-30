@@ -7,9 +7,21 @@ import { mensajeDeError } from '@/api/client';
 import { eliminarPartido, getPartido } from '@/api/partidos';
 import type { Evento, PartidoDetalle, TipoEvento } from '@/api/types';
 import { SoloRol } from '@/auth/SoloRol';
-import { AccionesPartido, AppText, Button, Card, EmptyState, ErrorMessage, Loading, Screen, StatusChip, estadoPartido } from '@/components';
+import {
+  AccionesPartido,
+  AppText,
+  Button,
+  Card,
+  EmptyState,
+  ErrorMessage,
+  Escudo,
+  Loading,
+  Screen,
+  StatusChip,
+  estadoPartido,
+} from '@/components';
 import { useApi } from '@/hooks/useApi';
-import { colors, spacing } from '@/theme';
+import { colors, fonts, spacing } from '@/theme';
 import { confirmar } from '@/utils/confirmar';
 import { diaCorto, hora } from '@/utils/formato';
 import { volver } from '@/utils/navegacion';
@@ -107,23 +119,29 @@ function Marcador({ partido }: { partido: PartidoDetalle }) {
   const estado = estadoPartido[partido.estado];
   const conResultado = partido.estado !== 'PROGRAMADO';
   return (
-    <Card variant="elevated">
+    <Card variant="elevated" style={styles.tarjeta}>
       <StatusChip label={estado.label} status={estado.status} />
       <View style={styles.marcador}>
-        <AppText variant="subhead" style={[styles.equipo, styles.local]}>
-          {partido.local.nombre}
+        <View style={styles.equipo}>
+          <Escudo nombre={partido.local.nombre} size={60} />
+          <AppText variant="body" style={styles.nombre} numberOfLines={2}>
+            {partido.local.nombre}
+          </AppText>
+        </View>
+        <AppText variant="display" style={styles.goles}>
+          {conResultado ? `${partido.golesLocal} : ${partido.golesVisitante}` : 'vs'}
         </AppText>
-        <AppText variant="headline" style={styles.goles}>
-          {conResultado ? `${partido.golesLocal} - ${partido.golesVisitante}` : 'vs'}
-        </AppText>
-        <AppText variant="subhead" style={styles.equipo}>
-          {partido.visitante.nombre}
-        </AppText>
+        <View style={styles.equipo}>
+          <Escudo nombre={partido.visitante.nombre} size={60} />
+          <AppText variant="body" style={styles.nombre} numberOfLines={2}>
+            {partido.visitante.nombre}
+          </AppText>
+        </View>
       </View>
-      <AppText variant="bodySmall" color={colors.textSecondary}>
+      <AppText variant="bodySmall" color={colors.textSecondary} style={styles.centrado}>
         {diaCorto(partido.fechaHoraInicio)} · {hora(partido.fechaHoraInicio)} · {partido.cancha.nombre}
       </AppText>
-      <AppText variant="bodySmall" color={colors.textSecondary}>
+      <AppText variant="bodySmall" color={colors.textSecondary} style={styles.centrado}>
         Árbitro: {partido.arbitro.nombre}
       </AppText>
     </Card>
@@ -154,20 +172,29 @@ function FilaEvento({ evento, partido }: { evento: Evento; partido: PartidoDetal
 }
 
 const styles = StyleSheet.create({
+  tarjeta: {
+    alignItems: 'center',
+  },
   marcador: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.md,
+    gap: spacing.sm,
     marginVertical: spacing.lg,
   },
   equipo: {
     flex: 1,
+    alignItems: 'center',
+    gap: spacing.sm,
   },
-  local: {
-    textAlign: 'right',
+  nombre: {
+    fontFamily: fonts.bodySemiBold,
+    textAlign: 'center',
   },
   goles: {
-    minWidth: 90,
+    minWidth: 100,
+    textAlign: 'center',
+  },
+  centrado: {
     textAlign: 'center',
   },
   cargar: {

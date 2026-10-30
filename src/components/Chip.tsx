@@ -1,6 +1,7 @@
+import { LinearGradient } from 'expo-linear-gradient';
 import { Pressable, StyleSheet, View } from 'react-native';
 
-import { borders, colors, fonts } from '@/theme';
+import { borders, colors, fonts, gradients, radius } from '@/theme';
 
 import { AppText } from './AppText';
 
@@ -39,6 +40,14 @@ export function FilterChip({
       accessibilityState={{ selected }}
       onPress={onPress}
       style={[styles.filter, selected && styles.filterSelected]}>
+      {selected ? (
+        <LinearGradient
+          colors={gradients.primary}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={StyleSheet.absoluteFill}
+        />
+      ) : null}
       <AppText
         variant="label"
         color={selected ? colors.textInverse : colors.textSecondary}
@@ -53,26 +62,28 @@ const styles = StyleSheet.create({
   status: {
     alignSelf: 'flex-start',
     borderWidth: borders.regular,
-    paddingVertical: 3,
-    paddingHorizontal: 10,
+    borderRadius: radius.pill,
+    paddingVertical: 4,
+    paddingHorizontal: 12,
   },
   statusText: {
-    fontFamily: fonts.bodyBold,
-    fontSize: 11,
-    letterSpacing: 0.7,
-    textTransform: 'uppercase',
+    fontFamily: fonts.bodySemiBold,
+    fontSize: 12,
+    letterSpacing: 0.2,
   },
   filter: {
+    backgroundColor: colors.surfaceRaised,
     borderWidth: borders.regular,
-    borderColor: colors.borderMedium,
-    paddingVertical: 6,
-    paddingHorizontal: 14,
+    borderColor: colors.borderSubtle,
+    borderRadius: radius.pill,
+    overflow: 'hidden',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
   },
   filterSelected: {
-    backgroundColor: colors.primary,
-    borderColor: colors.primary,
+    borderColor: 'transparent',
   },
   filterText: {
-    letterSpacing: 0.5,
+    letterSpacing: 0.2,
   },
 });
